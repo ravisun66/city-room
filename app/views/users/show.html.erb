@@ -1,6 +1,7 @@
 <% provide(:title, @user.name) %>
-<div class="container" style="padding-top: 40px;">
 	<% if @bookings.present? %>
+		<div class="container" style="padding-top: 40px;">
+		<div class="center" style="font-size: 30px;">Your Bookings</div>
 		<table class="table table-striped">
 		  <thead>
 		    <tr>
@@ -27,5 +28,12 @@
 		  <% end %>
 		  </tbody>
 		</table>
+		</div>
+		<% else %>
+		<div class="container">No Booking available.</div>
 	<% end %>
+<div class="container">
+<div class="row center">
+  <%= link_to "Book now!", root_path, class: "btn btn-lg btn-success" %>
+  </div>
 </div>
