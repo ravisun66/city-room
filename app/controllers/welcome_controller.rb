@@ -5,17 +5,20 @@ class WelcomeController < ApplicationController
   end
   def booking
   	@booking = Booking.new(booking_params)
-  	price_per_night = Room.find(booking_params[:room_id]).room_type.price_per_night
-  	check_in_date = Time.parse(booking_params[:check_in])
-  	check_out_date = Time.parse(booking_params[:check_out])
-		@booking.price = price_per_night.to_i * ((check_out_date - check_in_date).to_i / (24 * 60 * 60))
+  	if booking_params[:room_id].present?
+	  	price_per_night = Room.find(booking_params[:room_id]).room_type.price_per_night
+	  	check_in_date = Time.parse(booking_params[:check_in])
+	  	check_out_date = Time.parse(booking_params[:check_out])
+			@booking.price = price_per_night.to_i * ((check_out_date - check_in_date).to_i / (24 * 60 * 60))
+  	end
   	@booking.user_id = current_user.id
   	@booking.number = rand.to_s[2..11]
   	if @booking.save 
   		flash[:success] = "Booked a Room in City Room App!"
 	      redirect_to current_user
 	    else
-	      
+	    	  		flash[:danger] = "Please select room number"
+	      render 'home'
 	    end
   end
   def get_rooms
