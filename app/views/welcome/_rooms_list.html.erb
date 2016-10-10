@@ -98,17 +98,18 @@
 			<% end %>
 			</div>
 			</div> 
+			<%if logged_in? %>
+  			<div class="center row">
+      		<%= f.submit "Book Your Room", class: "btn btn-primary" %>
+      	</div>
+      <% end %>
 		<% end %>
 		<% elsif (data[:response] == "Error") %>
 		<div>
 			<%= data[:message]%>
 		</div>
   <% end %>
-  <%if logged_in? %>
-  <div class="center row">
-      <%= f.submit "Book Your Room", class: "btn btn-primary" %>
-      </div>
-      <% end %>
+
     <% end %>
     <script type="text/javascript">
     	$(function(){

@@ -26,9 +26,19 @@ class WelcomeController < ApplicationController
   	check_in = params[:check_in_date]
   	check_out = params[:check_out_date]
   	room_type = params[:room_type] if params[:room_type].present?
-		render json: {response: 'Error', message: "Please fill valid date in (dd-mm-yyyy) format."} unless check_in_date = Time.parse(check_in)
-		render json: {response: 'Error', message: "Please fill valid date in (dd-mm-yyyy) format."} unless check_out_date = Time.parse(check_out)
-		if (check_in_date < Time.now) || (check_in_date - Time.now > 6.months)
+		begin
+  		check_in_date = Time.parse(check_in)
+  	rescue
+  		@selected =  {response: 'Error', message: "Please fill valid date in (dd-mm-yyyy) format."}
+  		render 'get_rooms.js'
+  	end
+		begin
+  		check_out_date = Time.parse(check_out)
+  	rescue
+  		@selected = {response: 'Error', message: "Please fill valid date in (dd-mm-yyyy) format."}
+  		render 'get_rooms.js'
+  	end		
+  	if (check_in_date < Time.now) || (check_in_date - Time.now > 6.months)
 			@selected =  {response: 'Error', message: "Please fill-in valid date range upto 6 months in (dd-mm-yyyy) format."}
 
 			render 'get_rooms.js'

@@ -4,8 +4,18 @@ class ApiController < ApplicationController
   	check_in = params[:check_in_date]
   	check_out = params[:check_out_date]
   	room_type = params[:room_type] if params[:room_type].present?
-		render json: {response: 'Error', message: "Please fill valid date in (dd-mm-yyyy) format."} unless check_in_date = Time.parse(check_in)
-		render json: {response: 'Error', message: "Please fill valid date in (dd-mm-yyyy) format."} unless check_out_date = Time.parse(check_out)
+  	begin
+  		check_in_date = Time.parse(check_in)
+  	rescue
+  		render json: {response: 'Error', message: "Please fill valid date in (dd-mm-yyyy) format."}
+  		return false
+  	end
+		begin
+  		check_out_date = Time.parse(check_out)
+  	rescue
+  		render json: {response: 'Error', message: "Please fill valid date in (dd-mm-yyyy) format."}
+  		return false
+  	end
 		if (check_in_date < Time.now) || (check_in_date - Time.now > 6.months)
 			render json: {response: 'Error', message: "Please fill-in valid date range upto 6 months in (dd-mm-yyyy) format."}
 		elsif (check_out_date < Time.now) || (check_out_date - Time.now > 6.months) || (check_in_date > check_out_date)
