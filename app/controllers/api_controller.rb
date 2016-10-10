@@ -1,26 +1,4 @@
-class WelcomeController < ApplicationController
- respond_to :html, :json, :js
-  def home
-  	@booking = Booking.new
-  end
-  def booking
-  	@booking = Booking.new(booking_params)
-  	if booking_params[:room_id].present?
-	  	price_per_night = Room.find(booking_params[:room_id]).room_type.price_per_night
-	  	check_in_date = Time.parse(booking_params[:check_in])
-	  	check_out_date = Time.parse(booking_params[:check_out])
-			@booking.price = price_per_night.to_i * ((check_out_date - check_in_date).to_i / (24 * 60 * 60))
-  	end
-  	@booking.user_id = current_user.id
-  	@booking.number = rand.to_s[2..11]
-  	if @booking.save 
-  		flash[:success] = "Booked a Room in City Room App!"
-	      redirect_to current_user
-	    else
-	    	  		flash[:danger] = "Please select room number"
-	      render 'home'
-	    end
-  end
+class ApiController < ApplicationController
   def get_rooms
   	@booking = Booking.new
   	check_in = params[:check_in_date]
@@ -29,22 +7,16 @@ class WelcomeController < ApplicationController
 		render json: {response: 'Error', message: "Please fill valid date in (dd-mm-yyyy) format."} unless check_in_date = Time.parse(check_in)
 		render json: {response: 'Error', message: "Please fill valid date in (dd-mm-yyyy) format."} unless check_out_date = Time.parse(check_out)
 		if (check_in_date < Time.now) || (check_in_date - Time.now > 6.months)
-			@selected =  {response: 'Error', message: "Please fill-in valid date range upto 6 months in (dd-mm-yyyy) format."}
-
-			render 'get_rooms.js'
+			render json: {response: 'Error', message: "Please fill-in valid date range upto 6 months in (dd-mm-yyyy) format."}
 		elsif (check_out_date < Time.now) || (check_out_date - Time.now > 6.months) || (check_in_date > check_out_date)
 
-			@selected  = {response: 'Error', message: "Please fill-in valid date range upto 6 months in (dd-mm-yyyy) format."}
-
-			render 'get_rooms.js'
+			render json: {response: 'Error', message: "Please fill-in valid date range upto 6 months in (dd-mm-yyyy) format."}
 		else
 		if params[:room_type].present? && room_type != '0'
 			room_type = room_type.to_i
 			unless room_type.between?(1,4)
-				@selected =  {response: 'Error', message: "Please pass valid Room Type Id (1 for Deluxe-room, 2 for Luxury-room, 3 for Luxury-suite or 4 for Presidential-suite)."} 
-				
-			render 'get_rooms.js'
-			return false
+				render json: {response: 'Error', message: "Please pass valid Room Type Id (1 for Deluxe-room, 2 for Luxury-room, 3 for Luxury-suite or 4 for Presidential-suite)."} 
+				return false
 			end
 		end
 		rooms = Room.where.not("EXISTS (SELECT bookings.* FROM bookings where 
@@ -92,18 +64,10 @@ class WelcomeController < ApplicationController
 				response_message[:presidential_suites] = presidential_suites.to_json
 				response_message[:presidential_suite] = presidential_suite.to_json
 			end
-			@selected = response_message
-			render 'get_rooms.js'
-			#render json: response_message
+			render json: response_message
     else
-      @selected = {response: 'Error', message: "Rooms not available"}
-			render 'get_rooms.js'
+      render json: {response: 'Error', message: "Rooms not available"}
     end
   end
-
-  end
-  private
-  	def booking_params
-      params.require(:booking).permit(:number, :check_in, :check_out, :price, :user_id, :room_id)
-    end
+end
 end

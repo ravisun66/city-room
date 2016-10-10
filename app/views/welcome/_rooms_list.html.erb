@@ -99,9 +99,9 @@
 			</div>
 			</div> 
 		<% end %>
-		<% else %>
+		<% elsif (data[:response] == "Error") %>
 		<div>
-			No Rooms Available.
+			<%= data[:message]%>
 		</div>
   <% end %>
   <%if logged_in? %>
