@@ -1,0 +1,33 @@
+<% provide(:title, "Home") %>
+<div class="center jumbotron">
+  <h1>Welcome to City Room App</h1>
+  <h2>
+    Book room in your city for best price.
+  </h2>
+  <% unless logged_in? %>
+  	<%= link_to "Sign up now!", signup_path, class: "btn btn-lg btn-primary" %>
+  <% end %>
+  	<%= form_tag("/get_available_rooms", remote: true, id: "get_room_form", :method => :get) do |f| %>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Check in: <input type="text" class="span2" value="" id="dpd1" placeholder="dd-mm-yyyy" ></th>
+            <th>Check out: <input type="text" class="span2" value="" id="dpd2" placeholder="dd-mm-yyyy"></th>
+            <th>  <div class="form-group">
+  <label for="sel1">Room Type:</label>
+  <select class="form-control" id="roomType">
+    <option value="0">All Rooms</option>
+    <option value="1">Deluxe Rooms</option>
+    <option value="2">Luxury Rooms</option>
+    <option value="3">Luxury Suites</option>
+    <option value="4">Presidential Suites</option>
+  </select>
+</div></th>
+          </tr>
+        </thead>
+      </table>
+      <% end %>
+      <div id="rooms">
+			  
+			</div>
+</div>
