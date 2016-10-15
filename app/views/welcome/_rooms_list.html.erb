@@ -1,116 +1,34 @@
-	<%= simple_form_for(@booking) do |f| %>
-		<%= f.input :number, :as => :hidden, :input_html => {:value => ""} %>
-		<%= f.input :check_in, :as => :hidden, :input_html => {:value => check_in} %>
-		<%= f.input :check_out, :as => :hidden, :input_html => {:value => check_out} %>
-		<%= f.input :price, :as => :hidden, :input_html => {:value => ""} %>
-		<%= f.input :user_id, :as => :hidden, :input_html => {:value => ""} %>
-		<%= f.input :room_id, :as => :hidden, :input_html => {:id => 'room_id',:value => ""}  %>
-	<% if (data[:response] == "OK") %>
-		<div class="container" style="font-size: 30px;">
-			Rooms available: <%= data[:total_rooms_available]%>
-		</div>
-		<div class="container">
-		<div class="row">
-    <% if (data.key?(:deluxe_rooms_available)) %>
-    	<div class="col-md-6" style="text-align: left;font-size: 20px;">
-    		Deluxe Rooms(<%= data[:deluxe_rooms_available]%>)
-    	</div>  
-			<% obj = JSON.parse(data[:deluxe_room]) %>
-			<div class="col-md-6" style="text-align: right;font-size: 15px;">
-				<%= obj["description"]%>  Rate: ₹ <%= obj["price_per_night"]%>/night
-			</div>
-			</div>
-			<% rooms = JSON.parse(data[:deluxe_rooms]) %>
-			<div class="row">
-			<% for room in rooms %>
-				<div id="donate" class="col-sm-2">
-				<label class="blue">
-				<input type="radio" name="toggle" value="<%= room['id']%>">
-				<span><%= room["number"] %></span>
-				</label>
-				</div>
-			<% end %> 
-			</div>
-		<% end %>
-		<div class="row">
-    <% if (data.key?(:luxury_rooms_available)) %>
-    	<div class="col-md-6" style="text-align: left;font-size: 20px;">
-    		Luxury Rooms(<%= data[:luxury_rooms_available]%>)
-    	</div>  
-			<% obj = JSON.parse(data[:luxury_room]) %>
-			<div class="col-md-6" style="text-align: right;font-size: 15px;">
-				<%= obj["description"]%>  Rate: ₹ <%= obj["price_per_night"]%>/night
-			</div>
-			</div>
-			<% rooms = JSON.parse(data[:luxury_rooms]) %>
-			<div class="row">
-			<% for room in rooms %>
-				<div id="donate" class="col-sm-2">
-				<label class="pink">
-				<input type="radio" name="toggle" value="<%= room['id']%>">
-				<span><%= room["number"] %></span>
-				</label>
-				</div>
-			<% end %> 
-			</div>
-		<% end %>
-		<div class="row">
-    <% if (data.key?(:luxury_suites_available)) %>
-    	<div class="col-md-6" style="text-align: left;font-size: 20px;">
-    		Luxury Suites(<%= data[:luxury_suites_available]%>)
-    	</div>  
-			<% obj = JSON.parse(data[:luxury_suite]) %>
-			<div class="col-md-6" style="text-align: right;font-size: 15px;">
-				<%= obj["description"]%>  Rate: ₹ <%= obj["price_per_night"]%>/night
-			</div>
-			</div>
-			<% rooms = JSON.parse(data[:luxury_suites]) %>
-			<div class="row">
-			<% for room in rooms %>
-				<div id="donate" class="col-sm-2">
-				<label class="green">
-				<input type="radio" name="toggle" value="<%= room['id']%>">
-				<span><%= room["number"] %></span>
-				</label>
-				</div>
-			<% end %> 
-			</div>
-		<% end %>
-		<div class="row">
-    <% if (data.key?(:presidential_suites_available)) %>
-    	<div class="col-md-6" style="text-align: left;font-size: 20px;">
-    		Presidential Suites(<%= data[:presidential_suites_available]%>)
-    	</div>  
-			<% obj = JSON.parse(data[:presidential_suite]) %>
-			<div class="col-md-6" style="text-align: right;font-size: 15px;">
-				<%= obj["description"]%>  Rate: ₹ <%= obj["price_per_night"]%>/night
-			</div>
-			</div>
-			<% rooms = JSON.parse(data[:presidential_suites]) %>
-			<div class="row">
-			<% for room in rooms %>
-				<div id="donate" class="col-sm-2">
-				<label class="purple">
-				<input type="radio" name="toggle" value="<%= room['id']%>">
-				<span><%= room["number"] %></span>
-				</label>
-				</div>
-			<% end %>
-			</div>
-			</div> 
-			<%if logged_in? %>
-  			<div class="center row">
-      		<%= f.submit "Book Your Room", class: "btn btn-primary" %>
-      	</div>
-      <% end %>
-		<% end %>
-		<% elsif (data[:response] == "Error") %>
-		<div>
-			<%= data[:message]%>
-		</div>
-  <% end %>
+<%= simple_form_for(@booking) do |f| %>
+	<%= f.input :number, :as => :hidden, :input_html => {:value => ""} %>
+	<%= f.input :check_in, :as => :hidden, :input_html => {:value => check_in} %>
+	<%= f.input :check_out, :as => :hidden, :input_html => {:value => check_out} %>
+	<%= f.input :price, :as => :hidden, :input_html => {:value => ""} %>
+	<%= f.input :user_id, :as => :hidden, :input_html => {:value => ""} %>
+	<%= f.input :room_id, :as => :hidden, :input_html => {:id => 'room_id',:value => ""}  %>
 
-    <% end %>
+<% if (data[:response] == "OK") %>
+	<div class="container" style="font-size: 30px;">
+		Rooms available: <%= data[:total_rooms_available]%>
+	</div>
+	<div class="container">
+		<%= render 'room_details.html', data: data, room_val: :deluxe_rooms_available if (data.key?(:deluxe_rooms_available)) %>
+		<%= render 'room_details.html', data: data, room_val: :luxury_rooms_available if (data.key?(:luxury_rooms_available)) %>
+		<%= render 'room_details.html', data: data, room_val: :luxury_suites_available  if (data.key?(:luxury_suites_available)) %>
+		<%= render 'room_details.html', data: data, room_val: :presidential_suites_available  if (data.key?(:presidential_suites_available)) %>
+		<% %>
+	</div> 
+<% elsif (data[:response] == "Error") %>
+	<div>
+		<%= data[:message]%>
+	</div>
+<% end %>
+<%if logged_in? %>
+  <div class="center row">
+    <%= f.submit "Book Your Room", class: "btn btn-primary" %>
+  </div>
+<% end %>
+<% end %>
+
     <script type="text/javascript">
     	$(function(){
     		$('input[type="radio"]').on('click change', function() {

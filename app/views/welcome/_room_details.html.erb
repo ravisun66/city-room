@@ -1,0 +1,35 @@
+<% room_name_part = room_val.to_s.split("_") 
+	display_name = room_name_part[0].capitalize + " " + room_name_part[1].capitalize 
+	room_name = (room_name_part[0] + "_" + room_name_part[1])
+	rooms_name_symbol = room_name.to_sym
+	room_name_symbol = room_name[0..-2].to_sym %>
+<div class="row">
+	<div class="col-md-6" style="text-align: left;font-size: 20px;">
+  	<%= display_name %> (<%= data[room_val]%>)
+  </div>  
+	<% obj = JSON.parse(data[room_name_symbol]) %>
+	<div class="col-md-6" style="text-align: right;font-size: 15px;">
+		<%= obj["description"]%>  Rate: ₹ <%= obj["price_per_night"]%>/night
+	</div>
+</div>
+<% rooms = JSON.parse(data[rooms_name_symbol]) %>
+<% room_no_color = case room_name
+	when "deluxe_rooms"
+		'blue'
+	when "luxury_rooms"
+		'pink'
+	when "luxury_suites"
+		'green'
+	when "presidential_suites"
+		'purple'
+	end %>
+<div class="row">
+<% for room in rooms %>
+	<div id="donate" class="col-sm-2">
+	<label class='<%= room_no_color %>'>
+	<input type="radio" name="toggle" value="<%= room['id']%>">
+	<span><%= room["number"] %></span>
+	</label>
+	</div>
+<% end %> 
+</div>
